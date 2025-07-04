@@ -116,11 +116,11 @@ async function run() {
         // PAYMENT RELATED API
 
         // GET: Payment history by user (descending)
-        app.get('/user/:email', async (req, res) => {
+        app.get('/payments', async (req, res) => {
             try {
-                const email = req.params.email;
+                const email = req.query.email;
                 const history = await paymentHistoryCollection
-                    .find({ userEmail: email })
+                    .find({ email: email })
                     .sort({ paid_at: -1 }) // Descending
                     .toArray();
                 res.send(history);
