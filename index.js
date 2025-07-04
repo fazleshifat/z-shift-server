@@ -113,6 +113,32 @@ async function run() {
             }
         });
 
+
+        // PARCEL TRACKING RELATED API
+
+        // add info of tracing parcel (pending)
+        app.post('/parcel-tracking', async (req, res) => {
+            try {
+                const { trackingId, parcelId, status, location, note, updatedBy } = req.body;
+                const trackingDoc = {
+                    trackingId,
+                    parcelId: new ObjectId(parcelId),
+                    status,
+                    location,
+                    note,
+                    updatedBy,
+                    updatedAt: new Date()
+                };
+                const result = await parcelTrackingCollection.insertOne(trackingDoc);
+                res.status(201).send(result);
+            } catch (err) {
+                console.error('Failed to insert tracking update:', err);
+                res.status(500).send({ error: 'Failed to insert tracking data' });
+            }
+        });
+
+
+
         // PAYMENT RELATED API
 
         // GET: Payment history by user (descending)
