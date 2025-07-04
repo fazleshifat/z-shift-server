@@ -130,9 +130,9 @@ async function run() {
         });
 
         // POST: Mark as paid + Insert payment history
-        app.post('/confirm', async (req, res) => {
+        app.post('/payments/confirm', async (req, res) => {
             try {
-                const { parcelId, amount, transactionId, currency = 'BDT', paymentMethod = 'Stripe' } = req.body;
+                const { parcelId, email, amount, transactionId, currency = 'BDT', paymentMethod = 'Stripe' } = req.body;
 
                 const parcelObjectId = new ObjectId(parcelId);
 
@@ -150,13 +150,10 @@ async function run() {
                     return res.status(404).json({ message: 'Parcel not found or already paid.' });
                 }
 
-                // 2. Get parcel info for userEmail
-                const parcel = await parcelsCollection.findOne({ _id: parcelObjectId });
-
                 // 3. Insert payment history
                 const historyDoc = {
                     parcelId: parcelObjectId,
-                    userEmail: parcel.userEmail,
+                    email,
                     amount,
                     currency,
                     transactionId,
@@ -176,7 +173,7 @@ async function run() {
         });
 
         // payment card
-        app.post('/create-payment-intent', async (req, res) => {
+        app.post('/create-payment', async (req, res) => {
             const amountInCents = req.body.amountInCents;
 
             try {
