@@ -113,6 +113,22 @@ async function run() {
             }
         });
 
+        // PAYMENT RELATED API
+
+        // GET: Payment history by user (descending)
+        app.get('/user/:email', async (req, res) => {
+            try {
+                const email = req.params.email;
+                const history = await paymentHistoryCollection
+                    .find({ userEmail: email })
+                    .sort({ paid_at: -1 }) // Descending
+                    .toArray();
+                res.send(history);
+            } catch (err) {
+                res.status(500).send({ error: 'Failed to load payment history' });
+            }
+        });
+
         // POST: Mark as paid + Insert payment history
         app.post('/confirm', async (req, res) => {
             try {
