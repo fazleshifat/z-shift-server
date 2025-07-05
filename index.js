@@ -36,8 +36,25 @@ async function run() {
 
 
         const db = client.db('profastDB');
+        const userCollection = db.collection('users');
         const parcelsCollection = db.collection('parcels');
         const paymentHistoryCollection = db.collection('paymentHistory');
+
+
+        // crud operation for Users
+        app.post('/users', async (req, res) => {
+            const email = req.body.email;
+            const userExists = await userCollection.findOne({ email });
+            if (userExists) {
+                return res.status(200).json({ message: 'User already exists' });
+            }
+
+            const user = req.body;
+            const result = await userCollection.insertOne(user);
+            return res.send(result);
+        })
+
+
 
         // Test route
         app.get('/', (req, res) => {
@@ -116,7 +133,7 @@ async function run() {
 
         // PARCEL TRACKING RELATED API
 
-        // add info of tracing parcel (pending)
+        // added info of tracing parcel (pending)
         app.post('/parcel-tracking', async (req, res) => {
             try {
                 const { trackingId, parcelId, status, location, note, updatedBy } = req.body;
